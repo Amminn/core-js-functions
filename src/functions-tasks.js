@@ -91,8 +91,11 @@ function getPowerFunction(exponent) {
  *   getPolynom()      => null
  */
 function getPolynom(...coefficients) {
-  if (coefficients.length === 0) return null;
-  return function (x) {
+  if (coefficients.length === 0) {
+    return null;
+  }
+  // Give the returned function a name (e.g., polynomCalculator)
+  return function polynomCalculator(x) {
     return coefficients.reduce((sum, coeff, index) => {
       const exp = coefficients.length - 1 - index;
       return sum + coeff * x ** exp;
@@ -117,8 +120,10 @@ function getPolynom(...coefficients) {
 function memoize(func) {
   let cachedResult;
   let isCached = false;
-  return function (...args) {
+  // Give the returned function a name (e.g., memoizedFunc)
+  return function memoizedFunc(...args) {
     if (!isCached) {
+      // Using apply to correctly handle 'this' context if the original func needs it
       cachedResult = func.apply(this, args);
       isCached = true;
     }
@@ -142,10 +147,13 @@ function memoize(func) {
  * retryer() => 2
  */
 function retry(func, attempts) {
-  return function (...args) {
+  // Give the returned function a name (e.g., retryWrapper)
+  return function retryWrapper(...args) {
     let lastError;
-    for (let i = 0; i < attempts; i + 1) {
+    // *** Important Bug Fix: Use i += 1 or i++ for increment ***
+    for (let i = 0; i < attempts; i += 1) {
       try {
+        // Using apply to correctly handle 'this' context and arguments
         return func.apply(this, args);
       } catch (error) {
         lastError = error;
@@ -207,8 +215,13 @@ function logger(func, logFunc) {
  *   partialUsingArguments(fn, 'a','b','c','d')() => 'abcd'
  */
 function partialUsingArguments(fn, ...args1) {
-  return function (...args2) {
+  // Give the returned function a name (e.g., partiallyApplied)
+  return function partiallyApplied(...args2) {
+    // Using spread syntax is fine here and often preferred for clarity
+    // unless 'this' context for fn is critical and needs apply/call.
     return fn(...args1, ...args2);
+    // Or using apply if 'this' context is important:
+    // return fn.apply(this, [...args1, ...args2]);
   };
 }
 
